@@ -1,0 +1,293 @@
+{
+  "$comment": "The one registry of supported harnesses. scripts/kit.py installs from these paths and scripts/build-site.py renders the install tabs and support table from them, so the two cannot disagree. Paths are user-global; ~ is the user's home. `headless` is how `kit loop` runs one role as its own process; an unverified template has not been run against that CLI yet, and the loop refuses it unless models.json sets allow_unverified.",
+  "repo": "kratagyaagarwal2262/spec-to-ship",
+  "plugin": "spec-to-ship@kratagyaagarwal",
+  "shared_skills_dir": "~/.agents/skills",
+  "harnesses": [
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "detect": {
+        "bins": [
+          "claude"
+        ],
+        "dirs": [
+          "~/.claude"
+        ]
+      },
+      "method": "plugin",
+      "install": "# inside Claude Code\n/plugin marketplace add kratagyaagarwal2262/spec-to-ship\n/plugin install spec-to-ship@kratagyaagarwal",
+      "note": "Installed as a managed plugin: skills, agents and hooks in one step, updated by the marketplace.",
+      "support": {
+        "skills": true,
+        "commands": true,
+        "agents": true,
+        "hooks": true
+      },
+      "headless": {
+        "verified": "run against claude 2.1.258: a cold start costs about $0.07 on the smallest model, a cache-warm one about $0.01",
+        "argv": [
+          "claude",
+          "-p",
+          "{prompt}",
+          "--model",
+          "{model}",
+          "--output-format",
+          "json",
+          "--max-budget-usd",
+          "{budget}",
+          "--permission-mode",
+          "dontAsk",
+          "--exclude-dynamic-system-prompt-sections",
+          "--no-session-persistence"
+        ],
+        "effort": [
+          "--effort",
+          "{effort}"
+        ],
+        "write": [
+          "--allowedTools",
+          "Read",
+          "Edit",
+          "Write",
+          "Glob",
+          "Grep",
+          "Skill",
+          "Agent",
+          "Bash(flutter:*)",
+          "Bash(dart:*)",
+          "Bash(git status:*)",
+          "Bash(git diff:*)",
+          "Bash(git log:*)",
+          "Bash(git add:*)",
+          "Bash(git commit:*)",
+          "Bash(git rebase:*)",
+          "Bash(git fetch:*)",
+          "Bash(git merge:*)",
+          "Bash(gh issue:*)",
+          "Bash(rg:*)"
+        ],
+        "read": [
+          "--strict-mcp-config",
+          "--allowedTools",
+          "Read",
+          "Glob",
+          "Grep",
+          "Skill",
+          "Bash(git diff:*)",
+          "Bash(git log:*)",
+          "Bash(git show:*)",
+          "Bash(flutter analyze:*)",
+          "Bash(rg:*)"
+        ],
+        "tail": [],
+        "invoke": "/{skill} {args}",
+        "cost_field": "total_cost_usd",
+        "result_field": "result",
+        "models_field": "modelUsage"
+      }
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "detect": {
+        "bins": [
+          "codex"
+        ],
+        "dirs": [
+          "~/.codex"
+        ]
+      },
+      "method": "files",
+      "skills_dirs": [
+        "~/.agents/skills"
+      ],
+      "agents_dir": "~/.codex/agents",
+      "agents_format": "codex-toml",
+      "hooks_file": "~/.codex/hooks.json",
+      "install": "curl -fsSL https://raw.githubusercontent.com/kratagyaagarwal2262/spec-to-ship/main/install.sh | bash -s -- --for codex",
+      "note": "CLI, IDE extension and desktop app share one install. Commands are kept manual-only through each skill's agents/openai.yaml.",
+      "support": {
+        "skills": true,
+        "commands": true,
+        "agents": "Converted to TOML",
+        "hooks": true
+      },
+      "headless": {
+        "verified": false,
+        "argv": [
+          "codex",
+          "exec",
+          "-m",
+          "{model}"
+        ],
+        "effort": [
+          "-c",
+          "model_reasoning_effort={effort}"
+        ],
+        "write": [
+          "--sandbox",
+          "workspace-write",
+          "-c",
+          "sandbox_workspace_write.network_access=true"
+        ],
+        "read": [
+          "--sandbox",
+          "read-only"
+        ],
+        "tail": [
+          "{prompt}"
+        ],
+        "invoke": "${skill} {args}"
+      }
+    },
+    {
+      "id": "opencode",
+      "name": "opencode",
+      "detect": {
+        "bins": [
+          "opencode"
+        ],
+        "dirs": [
+          "~/.config/opencode"
+        ]
+      },
+      "method": "files",
+      "skills_dirs": [
+        "~/.agents/skills"
+      ],
+      "agents_dir": "~/.config/opencode/agents",
+      "agents_format": "opencode-md",
+      "commands_dir": "~/.config/opencode/commands",
+      "plugins_dir": "~/.config/opencode/plugins",
+      "config_file": "~/.config/opencode/opencode.json",
+      "install": "curl -fsSL https://raw.githubusercontent.com/kratagyaagarwal2262/spec-to-ship/main/install.sh | bash -s -- --for opencode",
+      "note": "Commands become /name commands, gated behind a permission prompt so only you start them.",
+      "support": {
+        "skills": true,
+        "commands": "Permission-gated",
+        "agents": "Converted",
+        "hooks": "Plugin"
+      },
+      "headless": {
+        "verified": false,
+        "argv": [
+          "opencode",
+          "run",
+          "-m",
+          "{model}",
+          "--format",
+          "json"
+        ],
+        "effort": [],
+        "write": [],
+        "read": [],
+        "tail": [
+          "{prompt}"
+        ],
+        "invoke": "/{skill} {args}"
+      }
+    },
+    {
+      "id": "antigravity",
+      "name": "Antigravity",
+      "detect": {
+        "bins": [
+          "agy"
+        ],
+        "dirs": [
+          "~/.gemini/config",
+          "~/.gemini/antigravity",
+          "~/.gemini/antigravity-cli"
+        ]
+      },
+      "method": "files",
+      "skills_dirs": [
+        "~/.gemini/config/skills",
+        "~/.gemini/antigravity-cli/skills"
+      ],
+      "agents_dir": "~/.gemini/config/agents",
+      "agents_format": "antigravity-md",
+      "hooks_file": "~/.gemini/config/hooks.json",
+      "install": "curl -fsSL https://raw.githubusercontent.com/kratagyaagarwal2262/spec-to-ship/main/install.sh | bash -s -- --for antigravity",
+      "note": "Antigravity has no manual-only skills and no prompt hook, so the agent may start any skill itself and pasted secrets are not scanned.",
+      "support": {
+        "skills": true,
+        "commands": "Not manual-only",
+        "agents": true,
+        "hooks": "No prompt hook"
+      },
+      "headless": {
+        "verified": false,
+        "argv": [
+          "agy",
+          "-p",
+          "{prompt}",
+          "--model",
+          "{model}",
+          "--output-format",
+          "json"
+        ],
+        "effort": [
+          "--effort",
+          "{effort}"
+        ],
+        "write": [],
+        "read": [],
+        "tail": [],
+        "invoke": "/{skill} {args}"
+      },
+      "agent_model_values": [
+        "inherit",
+        "flash",
+        "pro"
+      ]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "detect": {
+        "bins": [
+          "cursor"
+        ],
+        "dirs": [
+          "~/.cursor"
+        ]
+      },
+      "method": "files",
+      "skills_dirs": [
+        "~/.agents/skills"
+      ],
+      "agents_dir": "~/.cursor/agents",
+      "agents_format": "cursor-md",
+      "hooks_file": "~/.cursor/hooks.json",
+      "install": "curl -fsSL https://raw.githubusercontent.com/kratagyaagarwal2262/spec-to-ship/main/install.sh | bash -s -- --for cursor",
+      "note": "Reads the same shared skills folder as Codex and opencode, so installing several of them costs one copy.",
+      "support": {
+        "skills": true,
+        "commands": true,
+        "agents": true,
+        "hooks": true
+      },
+      "headless": {
+        "verified": false,
+        "argv": [
+          "agent",
+          "-p",
+          "--model",
+          "{model}",
+          "--output-format",
+          "json",
+          "--force"
+        ],
+        "effort": [],
+        "write": [],
+        "read": [],
+        "tail": [
+          "{prompt}"
+        ],
+        "invoke": "/{skill} {args}"
+      }
+    }
+  ]
+}

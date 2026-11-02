@@ -1,0 +1,22 @@
+{
+  "name": "kratagyaagarwal",
+  "owner": {
+    "name": "Kratagya Devvratt Agarwal"
+  },
+  "description": "Run a product from proposal to ship on any stack: proposal, sprints, test-first builds, QA gates and feedback.",
+  "plugins": [
+    {
+      "name": "spec-to-ship",
+      "source": "./",
+      "description": "Run a product from proposal to ship on any stack: proposal, sprints, test-first builds, QA gates and feedback.",
+      "category": "development",
+      "keywords": [
+        "project-management",
+        "agile",
+        "sprints",
+        "tdd",
+        "proposal"
+      ]
+    }
+  ]
+}

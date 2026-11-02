@@ -1,0 +1,4 @@
+.DS_Store
+.kit-private/
+_site/
+__pycache__/

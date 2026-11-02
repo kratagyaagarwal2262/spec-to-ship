@@ -1,0 +1,98 @@
+# A small app: sign in, a list of items, an item's detail, and settings.
+# Render it with: python3 scripts/render.py references --out /tmp/screens.html
+
+theme primary=#4F46E5 surface=#FFFFFF text=#111827 muted=#6B7280 danger=#DC2626 radius=12 font="Inter"
+
+module M1 "Accounts"
+
+screen SIGNIN-1 "Sign in" feature=M1.1
+  intent "One field per line, the primary action within thumb reach, recovery one tap away"
+  appbar "Sign in"
+  text h1 "Welcome back"
+  text muted "Sign in to see your items"
+  field "Email" hint="you@example.com"
+  field "Password" secure hint="At least 8 characters"
+  button "Sign in" -> ITEMS-1
+  link "Forgot password?" -> SIGNIN-2
+  state loading
+  state error keep
+    banner error "Wrong email or password"
+
+screen SIGNIN-2 "Reset password" feature=M1.2
+  intent "A single task: ask only for the email and say plainly what happens next"
+  appbar "Reset password" back -> SIGNIN-1
+  text body "Enter your email and we will send you a link to choose a new password."
+  field "Email" hint="you@example.com"
+  button "Send link" -> SIGNIN-1
+  state sent
+    empty "Check your inbox" "The link is valid for one hour."
+      button secondary "Back to sign in" -> SIGNIN-1
+
+module M2 "Items"
+
+screen ITEMS-1 "Items" feature=M2.1
+  intent "The list is the home: filters on top, newest first, adding one is always a thumb away"
+  appbar "Items" menu
+  tabs "All" "Open" "Done" selected=2
+  chips "This week" "Shared" "Starred" selected=1
+  list rows=4
+    row "Item title" "Short description" meta="2h" image -> ITEM-2
+  fab "+" -> ITEM-3
+  nav "Items" "Settings" selected=1 to=ITEMS-1,SET-1
+  state loading
+  state empty
+    empty "No items yet" "Add your first item to see it here."
+      button "Add item" -> ITEM-3
+
+screen ITEM-2 "Item detail" feature=M2.1,M2.2
+  intent "Image first, then what matters most; destructive actions sit last and ask first"
+  appbar "Item" back -> ITEMS-1
+  image "Cover photo" h=180
+  text h2 "Item title"
+  text caption "Updated 2 hours ago"
+  progress value=60
+  stat "Views" "128"
+  stat "Shares" "14"
+  section "Details"
+    row "Owner" "Alex Doe" avatar
+    row "Category" "General"
+  card "Notes"
+    text body "Free-form notes about the item go here."
+  button secondary "Edit" -> ITEM-3
+  button danger "Delete"
+  state confirm-delete keep
+    dialog "Delete this item?" "This cannot be undone."
+      button danger "Delete" -> ITEMS-1
+      button text "Cancel"
+
+screen ITEM-3 "New item" feature=M2.2
+  intent "Only the fields needed to save; everything else can be added later"
+  appbar "New item" back -> ITEMS-1
+  image "Add a photo" h=120
+  field "Title" hint="What is it?"
+  field "Notes" multiline hint="Optional"
+  select "Category" value="General"
+  toggle "Share with team"
+  check "Remind me tomorrow" on
+  button "Save" -> ITEM-2
+  state invalid keep
+    banner warning "Give the item a title before saving"
+  state category keep
+    sheet "Category" "Pick one"
+      row "General" -> ITEM-3
+      row "Work" -> ITEM-3
+      divider
+      button text "Cancel" -> ITEM-3
+
+screen SET-1 "Settings" feature=M2.3
+  intent "Account at the top, preferences grouped, sign out separated from everything else"
+  appbar "Settings"
+  avatar "Alex Doe"
+  section "Preferences"
+    toggle "Notifications" on
+    toggle "Dark mode"
+    select "Language" value="English"
+  banner info "Changes save automatically"
+  spacer
+  button danger "Sign out" -> SIGNIN-1
+  nav "Items" "Settings" selected=2 to=ITEMS-1,SET-1

@@ -1,0 +1,37 @@
+{
+  "$comment": "What each kind of agent work needs from a model. The kit names no models: `configure-models` reads this, finds what the user can reach, and writes ~/.spec-to-ship/models.json; `kit install` pins the result into every harness and `kit loop` runs from it. Every agent in agents/ belongs to exactly one role (validate-kit.py check 21).",
+  "roles": {
+    "explore": {
+      "needs": "Reliable tool calls and a large context window; almost no judgement. Runs constantly, so the cheapest model that searches well.",
+      "agents": [
+        "codebase-explorer"
+      ]
+    },
+    "build": {
+      "needs": "Strong at code and at multi-step tool use: edits, runs the analyzer and tests, reads the failures, fixes. The loop's builder and fixer, so it carries most of the volume.",
+      "agents": []
+    },
+    "judge": {
+      "needs": "The best judgement available: design decisions, a screen built from an underspecified design, root causes, and the escalated review of a one-way door. Rare, so quality first.",
+      "agents": [
+        "solution-architect"
+      ]
+    },
+    "review": {
+      "needs": "Reads a diff against acceptance criteria and standards and finds what is wrong. A different model family from build, so the two do not share blind spots.",
+      "agents": []
+    },
+    "qa": {
+      "needs": "Follows a procedure exactly: runs the suite, drives each criterion, files bugs. Moderate judgement, low volume.",
+      "agents": [
+        "qa-engineer"
+      ]
+    }
+  },
+  "loop": {
+    "$comment": "The roles `kit loop` runs headless, each as its own process, so each may use a different harness.",
+    "builder": "build",
+    "reviewer": "review",
+    "escalation": "judge"
+  }
+}
