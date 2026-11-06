@@ -86,6 +86,13 @@ Codex, opencode and Cursor read one shared folder, so installing for all three c
 twice. `kit uninstall` removes exactly what was installed and keeps your own settings.
 `install/harnesses.json` is the registry of these paths.
 
+**On your Claude account.** To use Spec-to-Ship in chat on the web, desktop and mobile with nothing
+installed on your computer, open [Customize > Plugins](https://claude.ai/customize/plugins) on
+claude.ai, choose **Add > Add marketplace**, enter `kratagyaagarwal2262/spec-to-ship`, then add the plugin
+from **Discover**. Chat loads the skills but not the agents or hooks, and it can't see your project
+folder, so work that edits a repo still needs Claude Code or Cowork. Claude Code downloads the
+plugin too when you start it signed in to the same account.
+
 **Updating.** `kit update` installs the latest release for every harness you already have, then
 prints what changed since your version, including any **Migration** step a project needs. Restart
 the harness afterwards. In Claude Code, `/plugin` updates the plugin; `kit update` runs that too
